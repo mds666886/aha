@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>岁星行迹：图解中华十二星次</title>
+
+    <style>
+        /* --- 字体引入与全局设置 --- */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+
+        :root {
+            /* 色彩变量 */
+            --jupiter-color: #FFD700; /* 木星/岁星的主色调 */
+            --jupiter-glow: rgba(255, 215, 0, 0.7); /* 木星/岁星的光晕效果 */
+            --bg-color-deep: #0a0a1a; /* 深层背景色 */
+            --bg-color-mid: #1a1a2e; /* 中层背景色 */
+            --text-color: #e0e0e0; /* 主要文本颜色 */
+            --highlight-text: #ffffff; /* 高亮文本颜色 */
+            --border-color: rgba(255, 255, 255, 0.2); /* 边框颜色 */
+            --modal-bg: rgba(20, 20, 40, 0.85); /* 模态框背景色 */
+            --panel-bg-color: rgba(26, 26, 46, 0.8); /* 面板背景色 */
+            --panel-border: rgba(255, 255, 255, 0.15); /* 面板边框色 */
+            --module-bg: rgba(10, 10, 26, 0.75); /* 模块背景色 */
+            --nav-active: rgba(255, 215, 0, 0.2); /* 导航激活状态背景 */
+            --nav-hover: rgba(255, 255, 255, 0.1); /* 导航悬停状态背景 */
+            --input-bg: rgba(0, 0, 0, 0.3); /* 输入框背景 */
+            --input-border: rgba(255, 255, 255, 0.3); /* 输入框边框 */
+
+            /* 字体变量 */
+            --font-serif: 'Noto Serif SC', serif; /* 衬线字体 */
+
+            /* 布局变量 */
+            --nav-height: 60px; /* 导航栏高度 */
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box; /* 使用 border-box 模型 */
+        }
+
+        html {
+             scroll-behavior: smooth; /* 平滑滚动效果 */
+        }
+
+        body {
+            font-family: var(--font-serif); /* 设置全局字体 */
+            background: linear-gradient(to bottom, var(--bg-color-deep), var(--bg-color-mid)); /* 背景渐变 */
+            color: var(--text-color); /* 设置文本颜色 */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* 防止水平滚动条 */
+            position: relative; /* 用于内部绝对定位元素 */
+        }
+
+
+        /* --- 背景星星 --- */
+        #background-stars {
+            position: fixed; /* 固定定位，覆盖整个视口 */
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color-deep); /* 基础背景色 */
+            overflow: hidden; /* 隐藏超出部分的星星 */
+            z-index: -1; /* 置于最底层 */
+        }
+
+        .star {
+            position: absolute; /* 绝对定位，随机分布 */
+            background-color: white; /* 星星颜色 */
+            border-radius: 50%; /* 圆形 */
+            animation: twinkle var(--twinkle-duration) infinite ease-in-out alternate; /* 闪烁动画 */
+        }
+
+        /* 星星闪烁动画 */
+        @keyframes twinkle {
+            from { opacity: var(--twinkle-opacity-min); transform: scale(var(--twinkle-scale-min)); }
+            to   { opacity: var(--twinkle-opacity-max); transform: scale(var(--twinkle-scale-max)); }
+        }
+
+
+        /* --- 开篇覆盖层 --- */
+        #introduction {
+            text-align: center; padding: 20px;
+            position: fixed; /* 固定定位，覆盖屏幕 */
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: linear-gradient(135deg, var(--bg-color-deep), var(--bg-color-mid)); /* 背景渐变 */
+            display: flex; flex-direction: column; justify-content: center; align-items: center; /* 居中内容 */
+            z-index: 100; /* 置于顶层 */
+            overflow: hidden; /* 隐藏内部动画溢出 */
+            opacity: 1; visibility: visible; /* 默认可见 */
+            transition: opacity 1s ease-out, visibility 1s ease-out; /* 淡出动画 */
+        }
+
+        #introduction.hidden {
+            opacity: 0; /* 隐藏状态 */
+            visibility: hidden;
+            pointer-events: none; /* 隐藏后不响应事件 */
+        }
+
+        #intro-stars {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; /* 开篇动画的星星背景 */
+        }
+
+        #jupiter-intro {
+            position: absolute; width: 40px; height: 40px; border-radius: 50%; /* 岁星图标 */
+            background: radial-gradient(circle at 60% 40%, rgba(255, 255, 240, 1) 0%, var(--jupiter-color) 40%, rgba(224, 160, 0, 0.8) 100%); /* 岁星颜色和渐变 */
+            box-shadow: 0 0 15px 5px var(--jupiter-glow); filter: blur(0.5px); /* 光晕和模糊效果 */
+            z-index: 2; opacity: 0; animation: introJupiter 7s ease-in-out infinite; /* 飞行和显隐动画 */
+        }
+
+        /* 开篇岁星动画 */
+        @keyframes introJupiter {
+            0%   { opacity: 0; transform: translate(-50vw, 20vh) scale(0.5); } /* 起始位置和状态 */
+            20%  { opacity: 1; } /* 淡入 */
+            80%  { opacity: 1; } /* 保持 */
+            100% { opacity: 0; transform: translate(50vw, -20vh) scale(1.2); } /* 结束位置和状态 */
+        }
+
+        .station-symbol {
+            position: absolute; font-size: 1.2rem; color: rgba(255, 255, 255, 0.6); opacity: 0; z-index: 1; /* 开篇星次符号 */
+        }
+
+        #introduction h1 {
+            font-weight: 700; color: var(--jupiter-color); /* 标题颜色 */
+            font-size: clamp(2.5em, 8vw, 4em); margin-bottom: 20px; /* 字体大小自适应 */
+            text-shadow: 0 0 15px var(--jupiter-glow); position: relative; z-index: 10; /* 文字阴影和层级 */
+        }
+
+        /* 开篇引言段落，通常不缩进 */
+        #introduction p {
+            max-width: 650px; margin: 30px auto; line-height: 1.9; /* 段落样式 */
+            font-size: clamp(1em, 3vw, 1.3em); color: var(--text-color); opacity: 0.9; /* 字体大小和透明度 */
+            position: relative; z-index: 10; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); /* 文字阴影 */
+            text-indent: 0; /* 确保无首行缩进 */
+        }
+
+        #start-btn {
+            padding: 15px 40px; font-size: clamp(1.1em, 3.5vw, 1.4em); font-family: var(--font-serif); /* 开始按钮样式 */
+            background-image: linear-gradient(to right, #f0c14b, var(--jupiter-color), #e0a000); /* 按钮背景渐变 */
+            color: #231f20; border: none; border-radius: 30px; cursor: pointer; /* 按钮颜色、边框、圆角 */
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease; /* 悬停动画 */
+            margin-top: 40px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4); /* 按钮阴影 */
+            position: relative; z-index: 10; /* 层级 */
+        }
+
+        #start-btn:hover {
+            transform: scale(1.1); box-shadow: 0 0 25px var(--jupiter-glow); /* 悬停效果 */
+        }
+
+
+        /* --- 主导航栏 --- */
+        #main-navigation {
+            position: fixed; top: 0; width: 100%; /* 固定顶部 */
+            height: var(--nav-height); /* 导航栏高度 */
+            background-color: rgba(10, 10, 30, 0.8); backdrop-filter: blur(8px); /* 背景色和毛玻璃效果 */
+            border-bottom: 1px solid var(--panel-border); /* 底部边框 */
+            z-index: 90; padding: 0; /* 层级 */
+            display: flex; align-items: center; /* 内部元素垂直居中 */
+            transition: background-color 0.3s ease, height 0.3s ease; /* 背景和高度过渡 */
+        }
+
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; width: 100%; /* 内容容器 */
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px; /* 内部布局 */
+        }
+
+        .nav-logo {
+            font-size: 1.4rem; font-weight: bold; color: var(--jupiter-color); /* Logo样式 */
+            text-decoration: none; text-shadow: 0 0 8px var(--jupiter-glow); /* 文字阴影 */
+        }
+
+        .nav-links {
+            display: flex; gap: 5px; /* 导航链接布局 */
+        }
+
+        .nav-link {
+            padding: 8px 15px; border-radius: 5px; color: var(--text-color); /* 链接样式 */
+            text-decoration: none; transition: all 0.3s ease; font-size: 0.95rem; /* 过渡效果 */
+        }
+
+        .nav-link:hover {
+            background-color: var(--nav-hover); color: var(--highlight-text); /* 悬停效果 */
+        }
+
+        .nav-link.active {
+            background-color: var(--nav-active); color: var(--jupiter-color); /* 激活状态 */
+        }
+
+
+        /* --- 主内容与模块布局 --- */
+        #main-content {
+            position: relative; width: 100%;
+            display: block; opacity: 1; /* 默认显示 */
+            overflow-x: hidden; /* 隐藏水平溢出 */
+            padding-top: var(--nav-height); /* 为固定导航栏留出空间 */
+        }
+
+        .content-module {
+            min-height: calc(100vh - var(--nav-height)); /* 模块最小高度 */
+            width: 100%; position: relative; /* 相对定位 */
+            display: flex; flex-direction: column; /* 纵向排列 */
+            align-items: center; justify-content: center; /* 内容居中 */
+            padding: 60px 20px; /* 内边距 */
+            border-bottom: 1px solid rgba(255,255,255,0.1); /* 模块间分隔线 */
+        }
+
+        .content-module:last-child {
+            border-bottom: none; /* 最后一个模块无分隔线 */
+        }
+
+
+        /* --- 核心模块：岁星十二宫殿 --- */
+        #core-module-container { /* 核心模块内部容器 */
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; width: 100%; flex-grow: 1; padding: 20px 0; /* 布局 */
+        }
+
+        #core-module { /* 圆环本身 */
+            position: relative;
+            width: clamp(420px, 75vmin, 700px); height: clamp(420px, 75vmin, 700px); /* 尺寸自适应 */
+            display: flex; justify-content: center; align-items: center; /* 居中 */
+            border-radius: 50%; box-shadow: inset 0 0 55px 12px rgba(0, 0, 0, 0.35); margin: 0 auto; /* 圆形和内阴影 */
+        }
+
+        #celestial-ring { /* 旋转的星环 */
+            position: absolute; width: 100%; height: 100%;
+            border-radius: 50%; transform: rotate(-15deg); /* 初始旋转角度，使星纪在顶部偏右 */
+        }
+
+        .station { /* 星次标记 */
+            position: absolute; top: 50%; left: 50%; /* 定位基点 */
+            width: 10%; height: 50%; margin-top: -50%; margin-left: -5%; /* 尺寸和偏移 */
+            transform-origin: 50% 100%; cursor: pointer; /* 旋转中心在底部中心 */
+            transition: transform 0.4s ease; transform: rotate(var(--angle)); /* 旋转动画 */
+        }
+
+        .station::before { /* 星次外圈刻度 */
+            content: ''; position: absolute; top: 4.5%; left: 50%; /* 定位 */
+            transform: translateX(-50%); width: 3.5px; height: 17px; /* 尺寸和居中 */
+            background: var(--border-color); border-radius: 2px; opacity: 0.6; /* 样式 */
+            transition: all 0.3s ease; /* 过渡效果 */
+        }
+        .station:hover::before {
+            height: 22px; width: 4.5px; opacity: 1; box-shadow: 0 0 6px var(--color); /* 悬停效果 */
+        }
+        .station.active-suici::before { /* 理论岁次位置高亮 */
+            background: var(--highlight-text); height: 26px; width: 5.5px;
+            opacity: 1; box-shadow: 0 0 9px var(--highlight-text);
+        }
+
+        .station-name { /* 星次名称 */
+            display: block; position: absolute; bottom: 28%; width: 100%; /* 定位 */
+            font-size: clamp(0.75rem, 1.8vmin, 1.05rem); font-weight: bold; color: var(--text-color); /* 字体 */
+            transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease; /* 过渡 */
+            transform: rotate(calc(-1 * var(--angle))); /* 反向旋转以保持文字正向 */
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); opacity: 0.8; /* 阴影和透明度 */
+            white-space: nowrap; text-align: center; /* 文本不换行居中 */
+        }
+        .station:hover .station-name,
+        .station.active-suici .station-name {
+            color: var(--highlight-text); opacity: 1; /* 悬停和激活状态颜色 */
+            transform: rotate(calc(-1 * var(--angle))) scale(1.1); /* 放大效果 */
+            text-shadow: 0 0 8px var(--color), 0 0 5px var(--color); /* 文本光晕 */
+        }
+        .station.active-suici .station-name {
+            color: var(--jupiter-color); text-shadow: 0 0 10px var(--jupiter-color); /* 理论岁次特殊颜色 */
+        }
+
+        .station::after { /* 星次名称引线 (视觉辅助) */
+            content: ''; position: absolute; bottom: 18%; left: 50%;
+            transform: translateX(-50%) rotate(calc(-1 * var(--angle))); /* 定位和反向旋转 */
+            width: 1px; height: calc(28% - 18%); min-height: 10px; /* 尺寸 */
+            background: rgba(224, 224, 224, 0.3); /* 颜色 */
+            transition: all 0.3s ease; opacity: 0; /* 默认隐藏 */
+        }
+        .station:hover::after {
+            opacity: 1; background: var(--color); /* 悬停时显示 */
+        }
+
+        /* 星次角度与颜色变量 */
+        #station-xingji   { --angle: 0deg;   --color: #ff7b7b; }
+        #station-xuanxiao { --angle: 30deg;  --color: #ffb367; }
+        #station-quzi     { --angle: 60deg;  --color: #67e6dc; }
+        #station-jianglou { --angle: 90deg;  --color: #ffcc67; }
+        #station-daliang  { --angle: 120deg; --color: #67d7a1; }
+        #station-shishen  { --angle: 150deg; --color: #f388e8; }
+        #station-chunshou { --angle: 180deg; --color: #ff7b7b; }
+        #station-chunhuo  { --angle: 210deg; --color: #ffb367; }
+        #station-chunwei  { --angle: 240deg; --color: #67e6dc; }
+        #station-shouxing { --angle: 270deg; --color: #ffcc67; }
+        #station-dahuo    { --angle: 300deg; --color: #67d7a1; }
+        #station-ximu     { --angle: 330deg; --color: #f388e8; }
+
+        #jupiter-dynamic { /* 动态岁星图标 */
+            position: absolute; /* 绝对定位，由 JS 控制位置 */
+            width: clamp(20px, 3.5vmin, 30px); height: clamp(20px, 3.5vmin, 30px); /* 尺寸 */
+            background: radial-gradient(circle at 60% 40%, rgba(255, 255, 240, 1) 0%, var(--jupiter-color) 40%, rgba(224, 160, 0, 0.8) 100%); /* 颜色 */
+            border-radius: 50%; /* 圆形 */
+            box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.5), 0 0 18px 4px var(--jupiter-glow), 0 0 40px 10px rgba(255, 215, 0, 0.3), inset 0 0 5px rgba(0,0,0,0.3); /* 复杂光晕效果 */
+            transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1); /* 位置移动动画 */
+            z-index: 10; /* 确保在星次之上 */
+            transform-origin: center center; transform: translate(-50%, -50%); /* 初始居中 */
+            animation: pulseJupiter 2.5s infinite ease-in-out; /* 脉冲动画 */
+        }
+        /* 岁星脉冲动画 */
+        @keyframes pulseJupiter {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.5), 0 0 18px 4px var(--jupiter-glow), 0 0 40px 10px rgba(255, 215, 0, 0.3), inset 0 0 5px rgba(0,0,0,0.3); }
+            50% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 7px 2px rgba(255, 255, 255, 0.7), 0 0 25px 6px var(--jupiter-glow), 0 0 50px 15px rgba(255, 215, 0, 0.4), inset 0 0 5px rgba(0,0,0,0.3); }
+        }
+
+        #time-controls { /* 时间控制面板 */
+            position: relative; margin-top: 30px; /* 位置 */
+            background-color: rgba(0, 0, 0, 0.7); padding: 18px 30px; /* 背景和内边距 */
+            border-radius: 18px; border: 1px solid var(--border-color); /* 圆角和边框 */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); /* 阴影 */
+            display: flex; flex-direction: column; align-items: center; gap: 12px; /* 内部布局 */
+            width: clamp(300px, 60vw, 450px); max-width: 90%; /* 宽度自适应 */
+            color: var(--text-color); z-index: 20; /* 层级 */
+        }
+
+        .year-display-container { /* 年份显示与输入容器 */
+            display: flex; align-items: center; gap: 8px; /* 布局 */
+            font-size: 1.3em; font-weight: bold; margin-bottom: 8px; /* 字体 */
+            color: var(--highlight-text); /* 高亮颜色 */
+        }
+
+        #year-input { /* 年份输入框 */
+            width: 80px; padding: 5px 8px; /* 尺寸和内边距 */
+            background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 4px; /* 样式 */
+            color: var(--highlight-text); font-size: 1em; font-family: var(--font-serif); /* 字体 */
+            text-align: center; transition: border-color 0.3s, box-shadow 0.3s; /* 过渡 */
+            -moz-appearance: textfield; /* 隐藏 Firefox 默认箭头 */
+        }
+        #year-input::-webkit-outer-spin-button,
+        #year-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; } /* 隐藏 Webkit 默认箭头 */
+        #year-input:focus { outline: none; border-color: var(--jupiter-color); box-shadow: 0 0 8px var(--jupiter-glow); } /* 聚焦效果 */
+
+        #year-slider { /* 年份滑块 */
+            width: 100%; height: 8px; cursor: pointer; /* 尺寸和鼠标样式 */
+            accent-color: var(--jupiter-color); background: rgba(255, 255, 255, 0.1); /* 颜色 */
+            border-radius: 4px; margin-bottom: 8px; /* 圆角和外边距 */
+        }
+        #year-slider::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; background: var(--jupiter-color); border-radius: 50%; cursor: pointer; box-shadow: 0 0 5px var(--jupiter-glow); } /* Webkit 滑块样式 */
+        #year-slider::-moz-range-thumb { width: 20px; height: 20px; background: var(--jupiter-color); border-radius: 50%; cursor: pointer; border: none; box-shadow: 0 0 5px var(--jupiter-glow); } /* Firefox 滑块样式 */
+
+        #station-info-display { /* 岁次信息显示 */
+            font-size: 1em; text-align: center; line-height: 1.5; /* 文本样式 */
+        }
+        #station-info-display strong { color: var(--jupiter-color); } /* 高亮年份 */
+
+        #chao-chen-indicator { /* 超辰指示 */
+            font-size: 0.9em; opacity: 0.8; margin-top: 5px; font-style: italic; /* 样式 */
+        }
+
+
+        /* --- 信息面板 (Modal) --- */
+        .modal {
+            position: fixed; top: 50%; left: 50%; /* 屏幕居中 */
+            transform: translate(-50%, -50%) scale(0.9); /* 初始状态稍微缩小 */
+            background-color: var(--modal-bg); backdrop-filter: blur(12px) saturate(150%); /* 背景和毛玻璃 */
+            border: 1px solid var(--border-color); border-radius: 20px; padding: 40px; /* 边框、圆角、内边距 */
+            width: clamp(300px, 85%, 600px); z-index: 100; /* 尺寸和层级 */
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7); /* 阴影 */
+            display: none; opacity: 0; /* 默认隐藏 */
+            transition: opacity 0.4s ease, transform 0.4s ease; /* 弹出动画 */
+        }
+
+        .modal.visible {
+            display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); /* 可见状态 */
+        }
+
+        .modal h3 {
+            margin-top: 0; margin-bottom: 30px; color: var(--jupiter-color); /* 标题样式 */
+            text-align: center; font-size: clamp(1.5em, 5vw, 2em); /* 字体大小 */
+            text-shadow: 0 0 10px var(--jupiter-glow); /* 标题光晕 */
+        }
+
+        /* Modal 内的通用段落样式，不加缩进 */
+        .modal p {
+            line-height: 1.9; margin-bottom: 20px; /* 段落行高和间距 */
+            font-size: clamp(0.9em, 2.5vw, 1.1em); opacity: 0.95; /* 字体大小和透明度 */
+            text-indent: 0; /* 确保 Modal 内普通 p 标签不默认缩进 */
+        }
+        /* 单独为详情文本添加首行缩进 */
+        #info-details-text {
+            text-indent: 2em;
+        }
+
+
+        .modal strong {
+            color: var(--highlight-text); font-weight: 700; /* 强调文字 */
+        }
+
+        #fenye-map { /* 分野地图区域 */
+            margin-top: 30px; padding: 25px; /* 外边距和内边距 */
+            background-color: rgba(0, 0, 0, 0.5); border-radius: 10px; /* 背景和圆角 */
+            text-align: center; color: #ccc; border: 1px dashed var(--border-color); /* 文本居中、颜色、虚线边框 */
+            position: relative; height: 250px; overflow: hidden; /* 相对定位、固定高度、隐藏溢出 */
+        }
+        #fenye-map h4 {
+            margin-top: 0; margin-bottom: 15px; color: var(--highlight-text); font-size: 1.2em; /* 分野标题 */
+        }
+        /* 分野地图内的 p 元素样式，不缩进 */
+        #fenye-map p {
+            font-size: clamp(0.8em, 2vw, 1em); line-height: 1.6; margin-bottom: 10px;
+            position: relative; /* 确保不是绝对定位 */
+            text-indent: 0; /* 确保无首行缩进 */
+        }
+        #fenye-map #fenye-description {
+            font-size: 0.9em; opacity: 0.8; margin: 10px auto 0; width: 90%; /* 调整描述文字的边距和宽度 */
+             text-indent: 0; /* 确保无首行缩进 */
+        }
+
+
+        .map-region { /* 分野地图高亮区域 (现在不会被 JS 创建了) */
+            position: absolute; background-color: rgba(255, 215, 0, 0.3);
+            border: 2px solid var(--jupiter-color); border-radius: 5px;
+            transition: all 0.3s ease; opacity: 0;
+            z-index: -1; /* 确保在文本下方 */
+            pointer-events: none; /* 不响应鼠标事件 */
+        }
+        .map-region.active {
+            opacity: 1; animation: pulseFenye 2s infinite alternate ease-in-out;
+        }
+        /* 分野区域脉冲动画 */
+        @keyframes pulseFenye {
+            0% { box-shadow: 0 0 5px var(--jupiter-color); }
+            100% { box-shadow: 0 0 15px var(--jupiter-color); }
+        }
+
+        .close-btn { /* 关闭按钮 */
+            position: absolute; top: 18px; right: 18px; /* 定位在右上角 */
+            background: none; border: none; color: var(--text-color); /* 透明背景无边框 */
+            font-size: 2em; line-height: 1; cursor: pointer; opacity: 0.7; /* 大小和透明度 */
+            transition: opacity 0.3s, transform 0.3s ease; /* 过渡效果 */
+        }
+        .close-btn:hover {
+            opacity: 1; transform: rotate(90deg) scale(1.1); color: var(--jupiter-color); /* 悬停效果 */
+        }
+
+
+        /* --- 专题探索模块通用样式 --- */
+        .exploration-module {
+            max-width: 1200px; width: 95%; margin: 0 auto; padding: 20px; /* 模块容器 */
+        }
+
+        .module-header {
+            text-align: center; margin-bottom: 40px; /* 模块头部 */
+        }
+        .module-header h2 {
+            color: var(--jupiter-color); font-size: clamp(1.8em, 5vw, 2.5em); /* 标题 */
+            margin-bottom: 15px; text-shadow: 0 0 10px var(--jupiter-glow); /* 光晕 */
+        }
+        /* 模块引言段落，不缩进 */
+        .module-header p {
+            color: var(--text-color); max-width: 800px; margin: 0 auto; /* 描述文字 */
+            line-height: 1.7; font-size: clamp(1em, 2.5vw, 1.2em); opacity: 0.9;
+            text-indent: 0; /* 确保无首行缩进 */
+        }
+
+        .content-cards {
+            display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; /* 卡片布局 */
+        }
+
+        .content-card {
+            background-color: var(--module-bg); border: 1px solid var(--panel-border); /* 卡片背景和边框 */
+            border-radius: 15px; padding: 30px; flex: 1; /* 圆角、内边距、弹性布局 */
+            min-width: 300px; max-width: 500px; /* 尺寸限制 */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* 阴影 */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 悬停动画 */
+        }
+        .content-card:hover {
+            transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); /* 悬停效果 */
+        }
+        .content-card h3 {
+            color: var(--highlight-text); font-size: 1.5em; margin-bottom: 20px; /* 卡片标题 */
+            padding-bottom: 10px; border-bottom: 1px solid var(--panel-border); /* 底部边框 */
+        }
+        /* 内容卡片段落，首行缩进 */
+        .content-card p {
+            line-height: 1.8; margin-bottom: 20px; /* 卡片段落 */
+            text-indent: 2em; /* 首行缩进 */
+        }
+
+
+        /* --- 时间的故事模块 --- */
+        #time-story { margin-top: 60px; margin-bottom: 60px; }
+
+        .timeline-container {
+            position: relative; width: 100%; height: 300px; margin: 40px 0; /* 时间轴容器 */
+            border-radius: 15px; background-color: var(--module-bg); /* 背景和圆角 */
+            border: 1px solid var(--panel-border); padding: 20px; overflow: hidden; /* 边框和内边距 */
+        }
+        .timeline {
+            position: absolute; top: 50%; left: 0; width: 100%; height: 4px; /* 时间轴线 */
+            background-color: rgba(255, 255, 255, 0.2); transform: translateY(-50%); /* 垂直居中 */
+        }
+        .timeline-event {
+            position: absolute; top: 50%; transform: translate(-50%, -50%); /* 事件点定位 */
+            cursor: pointer; transition: all 0.3s ease; z-index: 5; /* 交互和层级 */
+        }
+        .timeline-event .dot {
+            width: 16px; height: 16px; background-color: var(--jupiter-color); /* 事件点 */
+            border-radius: 50%; margin: 0 auto; box-shadow: 0 0 8px var(--jupiter-glow); /* 圆形和光晕 */
+            transition: transform 0.3s ease; /* 悬停动画 */
+        }
+        .timeline-event:hover .dot { transform: scale(1.3); } /* 悬停放大 */
+        .timeline-event .event-year {
+            position: absolute; width: 100px; text-align: center; left: calc(50% - 50px); /* 年份定位 */
+            color: var(--text-color); transition: all 0.3s ease; font-size: 0.9em;
+        }
+        .timeline-event:nth-child(odd) .event-year { top: -35px; } /* 奇数年份在上方 */
+        .timeline-event:nth-child(even) .event-year { bottom: -35px; } /* 偶数年份在下方 */
+        .timeline-event .event-name {
+            position: absolute; width: 150px; text-align: center; left: calc(50% - 75px); /* 事件名称定位 */
+            opacity: 0; transition: all 0.3s ease; color: var(--highlight-text); font-weight: bold; /* 默认隐藏 */
+            background-color: rgba(0,0,0,0.6); padding: 3px 5px; border-radius: 4px; font-size: 0.85em; /* 背景和小提示框样式 */
+        }
+        .timeline-event:nth-child(odd) .event-name { top: -65px; } /* 奇数名称在年份上方 */
+        .timeline-event:nth-child(even) .event-name { bottom: -65px; } /* 偶数名称在年份下方 */
+        .timeline-event:hover .event-name { opacity: 1; } /* 悬停显示名称 */
+
+
+        /* --- 天空的国度模块 --- */
+        #celestial-kingdoms { margin-top: 60px; margin-bottom: 60px; }
+
+        .map-container {
+            position: relative; width: 100%; max-width: 800px; height: 450px; margin: 40px auto; /* 地图容器 */
+            border-radius: 15px; background-color: var(--module-bg); /* 背景 */
+            border: 1px solid var(--panel-border); padding: 20px; overflow: hidden; /* 边框 */
+            /* 简化的示意性背景图 */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600"><path d="M120,100 Q250,50 380,120 Q500,170 620,140 Q700,120 750,150 Q780,250 730,350 Q680,420 700,480 Q650,520 580,500 Q480,460 400,500 Q300,540 220,510 Q150,490 100,400 Q80,320 120,100 Z" fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="2"/></svg>');
+            background-position: center; background-repeat: no-repeat; background-size: contain;
+        }
+        .region-labels { position: absolute; width: 100%; height: 100%; top: 0; left: 0; } /* 区域标签容器 */
+        .region-label {
+            position: absolute; color: var(--highlight-text); padding: 5px 10px; /* 标签样式 */
+            background-color: rgba(0, 0, 0, 0.7); border-radius: 5px; font-size: 0.9rem; /* 背景和圆角 */
+            transition: all 0.3s ease; cursor: pointer; opacity: 0.7; border: 1px solid transparent; /* 交互效果 */
+        }
+        .region-label:hover, .region-label.active {
+            opacity: 1; box-shadow: 0 0 10px var(--jupiter-glow); /* 悬停和激活效果 */
+            background-color: rgba(255, 215, 0, 0.2); border-color: var(--jupiter-color); /* 高亮背景和边框 */
+        }
+
+
+        /* --- 星空坐标系对比模块 --- */
+        #celestial-systems { margin-top: 60px; margin-bottom: 60px; }
+
+        .systems-container {
+            display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin: 40px 0; /* 对比卡片容器 */
+        }
+        .system-card {
+            background-color: var(--module-bg); border: 1px solid var(--panel-border); /* 卡片样式 */
+            border-radius: 15px; padding: 25px; flex: 1; /* 布局 */
+            min-width: 280px; max-width: 380px; transition: transform 0.3s ease; /* 尺寸和动画 */
+            position: relative; overflow: hidden; /* 相对定位 */
+        }
+        .system-card:hover { transform: translateY(-5px); } /* 悬停效果 */
+        .system-card h3 {
+            color: var(--highlight-text); margin-bottom: 15px; padding-bottom: 10px; /* 标题 */
+            border-bottom: 1px solid var(--panel-border); /* 分隔线 */
+        }
+        .system-visual {
+            height: 180px; margin: 20px 0; display: flex; justify-content: center; align-items: center; /* 可视化区域 */
+            position: relative; border: 1px dashed var(--border-color); border-radius: 5px; /* 边框 */
+            background-color: rgba(0,0,0,0.2); /* 半透明背景 */
+        }
+        .system-details { margin-top: 15px; } /* 详情区域 */
+        /* 星系对比详情段落，首行缩进 */
+        .system-details p {
+            margin-bottom: 10px; font-size: 0.95rem; /* 段落样式 */
+            text-indent: 2em; /* 首行缩进 */
+        }
+        .system-details p strong { color: var(--jupiter-color); } /* 强调文字 */
+        /* 示意性可视化元素 */
+        .system-visual .circle { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .system-visual .jupiter-icon { width: 20px; height: 20px; background-color: var(--jupiter-color); border-radius: 50%; box-shadow: 0 0 5px var(--jupiter-glow); position: absolute; }
+        .system-visual .constellation-icon { font-size: 1.5rem; position: absolute; opacity: 0.7; }
+        .system-visual .zodiac-icon { font-size: 1.8rem; position: absolute; opacity: 0.7; }
+
+
+        /* --- 历史的回响模块 --- */
+        #history-echoes { margin-top: 60px; margin-bottom: 60px; }
+
+        .history-timeline {
+            position: relative; margin: 60px 0; padding-left: 40px; /* 时间轴容器 */
+            max-width: 900px; margin-left: auto; margin-right: auto; /* 宽度和居中 */
+        }
+        .history-timeline::before { /* 竖直时间轴线 */
+            content: ''; position: absolute; left: 10px; top: 0; height: 100%; width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--jupiter-color), transparent); /* 渐变效果 */
+        }
+        .history-event {
+            position: relative; margin-bottom: 40px; padding-left: 30px; /* 时间点事件 */
+        }
+        .history-event::before { /* 时间点圆圈标记 */
+            content: ''; position: absolute; left: 2px; top: 5px; width: 16px; height: 16px;
+            background-color: var(--bg-color-mid); border: 2px solid var(--jupiter-color); /* 样式 */
+            border-radius: 50%; box-shadow: 0 0 8px var(--jupiter-glow); z-index: 5; /* 圆形、光晕、层级 */
+        }
+        .history-event h3 { color: var(--highlight-text); margin-bottom: 10px; font-size: 1.3rem; } /* 事件标题 */
+        /* 历史事件描述段落，首行缩进 */
+        .history-event p {
+            line-height: 1.8; margin-bottom: 10px; /* 事件描述 */
+            text-indent: 2em; /* 首行缩进 */
+        }
+        /* 引用说明，不缩进 */
+        .citation {
+             display: block; margin-top: 10px; font-style: italic; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; /* 引用说明 */
+             text-indent: 0; /* 确保无首行缩进 */
+        }
+
+
+        /* --- 响应式设计 --- */
+        @media (max-width: 768px) {
+            :root { --nav-height: auto; /* 小屏导航高度自适应 */ }
+            #main-navigation { height: auto; /* 导航栏高度改为自动 */ }
+            #main-content { padding-top: 70px; /* 预留足够空间给自适应导航栏 */ }
+            .content-module { min-height: calc(100vh - 70px); padding: 30px 15px; } /* 调整模块padding和最小高度 */
+
+            .nav-container { flex-direction: column; gap: 5px; padding: 5px 10px; } /* 导航容器内元素垂直排列 */
+            .nav-links { gap: 3px; flex-wrap: wrap; justify-content: center; } /* 导航链接换行居中 */
+            .nav-link { padding: 5px 8px; font-size: 0.85rem; } /* 调整链接内边距和字体 */
+
+            #core-module { width: clamp(300px, 90vmin, 420px); height: clamp(300px, 90vmin, 420px); } /* 调整核心圆环大小 */
+            .station-name { font-size: clamp(0.65rem, 1.6vmin, 0.9rem); } /* 调整星次名称字体 */
+
+            #time-controls { width: 90%; padding: 15px 20px; } /* 调整时间控制面板 */
+            .year-display-container { font-size: 1.2em; } /* 年份显示字体 */
+            #year-input { width: 70px; font-size: 0.9em; padding: 4px 6px;} /* 年份输入框 */
+
+            .content-card { min-width: 90%; padding: 20px; } /* 卡片宽度 */
+            .modal { padding: 25px; width: 90%; } /* 模态框 */
+            #fenye-map { height: 200px; padding: 15px; } /* 分野地图高度 */
+            /* 调整小屏下分野地图文本大小 */
+            #fenye-map p { font-size: clamp(0.75em, 2.2vw, 0.9em); }
+            #fenye-map #fenye-description { font-size: 0.85em; width: 95%; }
+
+            .system-card { min-width: 90%; padding: 20px; } /* 星系对比卡片 */
+            .system-visual { height: 150px; } /* 可视化区域高度 */
+
+            .module-header h2 { font-size: clamp(1.5em, 6vw, 2em); } /* 模块标题字体 */
+            .module-header p { font-size: clamp(0.9em, 2.8vw, 1.1em); } /* 模块描述字体 */
+
+            .history-timeline { padding-left: 30px; } /* 历史时间轴 */
+            .history-event { padding-left: 25px; } /* 历史事件 */
+            .history-event::before { left: 0px; } /* 时间点标记位置 */
+
+            .timeline-container { height: 250px; } /* 时间故事时间轴 */
+            .map-container { height: 350px; } /* 天空国度地图 */
+            .region-label { font-size: 0.8rem; padding: 4px 8px; } /* 区域标签 */
+        }
+
+        @media (max-width: 480px) {
+             /* 针对更小屏幕的微调 */
+            .content-module { padding: 40px 10px; } /* 模块内边距 */
+            .content-card { padding: 20px; } /* 卡片内边距 */
+            .modal { padding: 20px; } /* 模态框内边距 */
+            .nav-link { padding: 4px 6px; font-size: 0.8rem; } /* 导航链接 */
+            #year-input { width: 60px; } /* 年份输入框宽度 */
+            #fenye-map { height: 180px; } /* 进一步调整分野地图高度 */
+            #fenye-map p { font-size: 0.7em; } /* 分野地图文字大小 */
+            #fenye-map #fenye-description { font-size: 0.75em; }
+
+             /* 在非常小的屏幕上，可以考虑减小缩进量 */
+            .content-card p, .system-details p, .history-event p, #info-details-text {
+                text-indent: 1.5em; /* 或者调整为合适的 em 值 */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 动态背景 -->
+    <div id="background-stars"></div>
+
+    <!-- 主导航栏 -->
+    <nav id="main-navigation">
+        <div class="nav-container">
+            <a href="#core-module-section" class="nav-logo">岁星行迹</a>
+            <div class="nav-links">
+                <a href="#core-module-section" class="nav-link active" data-target="core-module-section">岁星十二宫殿</a>
+                <a href="#time-story" class="nav-link" data-target="time-story">时间的故事</a>
+                <a href="#celestial-kingdoms" class="nav-link" data-target="celestial-kingdoms">天空的国度</a>
+                <a href="#celestial-systems" class="nav-link" data-target="celestial-systems">星空坐标系对比</a>
+                <a href="#history-echoes" class="nav-link" data-target="history-echoes">历史的回响</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 开篇覆盖层 -->
+    <div id="introduction">
+        <div id="intro-stars"></div>
+        <div id="jupiter-intro"></div>
+        <h1>岁星行迹</h1>
+        <p>"它，十二年巡天一周，指引着时间的脚步，连接着天上的星辰与地上的疆域。它就是岁星。跟随它的轨迹，探索中国古代独特的时空密码——十二星次。"</p>
+        <button id="start-btn">启程追星</button>
+    </div>
+
+    <!-- 主内容区域 -->
+    <main id="main-content">
+
+        <!-- 核心模块：岁星十二宫殿 -->
+        <section id="core-module-section" class="content-module">
+            <div id="core-module-container">
+                <div id="core-module">
+                    <div id="celestial-ring">
+                         <!-- 星次标记 -->
+                         <div class="station" id="station-xingji"   data-id="0" data-name="星纪"   data-details="地支:子 | 范围:摩羯/人马 | 象征:初始" data-fenye="吴越"><span class="station-name">星纪</span></div>
+                         <div class="station" id="station-xuanxiao" data-id="1" data-name="玄枵"   data-details="地支:亥 | 范围:水瓶/摩羯 | 象征:虚空" data-fenye="齐"><span class="station-name">玄枵</span></div>
+                         <div class="station" id="station-quzi"     data-id="2" data-name="娵訾"   data-details="地支:戌 | 范围:双鱼/水瓶 | 象征:孕育" data-fenye="卫"><span class="station-name">娵訾</span></div>
+                         <div class="station" id="station-jianglou" data-id="3" data-name="降娄"   data-details="地支:酉 | 范围:白羊/双鱼 | 象征:聚集" data-fenye="鲁"><span class="station-name">降娄</span></div>
+                         <div class="station" id="station-daliang"  data-id="4" data-name="大梁"   data-details="地支:申 | 范围:金牛/白羊 | 象征:坚固" data-fenye="赵"><span class="station-name">大梁</span></div>
+                         <div class="station" id="station-shishen"  data-id="5" data-name="实沈"   data-details="地支:未 | 范围:双子/金牛 | 象征:充实" data-fenye="魏"><span class="station-name">实沈</span></div>
+                         <div class="station" id="station-chunshou" data-id="6" data-name="鹑首"   data-details="地支:午 | 范围:巨蟹/双子 | 象征:顶端" data-fenye="楚"><span class="station-name">鹑首</span></div>
+                         <div class="station" id="station-chunhuo"  data-id="7" data-name="鹑火"   data-details="地支:巳 | 范围:狮子/巨蟹 | 象征:光明" data-fenye="周"><span class="station-name">鹑火</span></div>
+                         <div class="station" id="station-chunwei"  data-id="8" data-name="鹑尾"   data-details="地支:辰 | 范围:处女/狮子 | 象征:变化" data-fenye="韩"><span class="station-name">鹑尾</span></div>
+                         <div class="station" id="station-shouxing" data-id="9" data-name="寿星"   data-details="地支:卯 | 范围:天秤/处女 | 象征:平衡" data-fenye="郑"><span class="station-name">寿星</span></div>
+                         <div class="station" id="station-dahuo"    data-id="10" data-name="大火"  data-details="地支:寅 | 范围:天蝎/天秤 | 象征:标记" data-fenye="宋"><span class="station-name">大火</span></div>
+                         <div class="station" id="station-ximu"     data-id="11" data-name="析木"  data-details="地支:丑 | 范围:射手/天蝎 | 象征:构造" data-fenye="燕"><span class="station-name">析木</span></div>
+                        <!-- 动态岁星图标 -->
+                        <div id="jupiter-dynamic"></div>
+                    </div>
+                </div>
+                <!-- 时间控制面板 -->
+                <div id="time-controls">
+                    <div class="year-display-container">
+                        公元
+                        <input type="number" id="year-input" min="-1000" max="2500" step="1" value="4">
+                        年
+                    </div>
+                    <input type="range" id="year-slider" min="-1000" max="2500" value="4">
+                    <div id="station-info-display">
+                        理论岁次: <strong><span id="theoretical-station-name">星纪</span></strong><br>
+                        岁星实位约在: <strong><span id="actual-station-name">星纪</span></strong>
+                    </div>
+                    <div id="chao-chen-indicator"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 时间的故事 -->
+        <section id="time-story" class="content-module exploration-module">
+            <div class="module-header"><h2>时间的故事：岁星纪年法</h2><p>古代天文学家将岁星（木星）的运行周期与十二地支结合，创建了一种独特的纪年方法。岁星每年约走过一个星次，十二年完成一周，这便是"岁星纪年法"的基础。</p></div>
+            <div class="content-cards"><div class="content-card"><h3>岁星与纪年</h3><p>岁星（木星）是地球外的第五颗行星，古代中国将它称为"岁星"，因为它大约每12年环绕太阳一周。古人发现，它移动的角速度与地支的数目十分接近，因此将天空分为与十二地支对应的十二个区域。</p><p>当岁星运行到某一星次时，该年便以相应的地支命名。例如，岁星行至星纪时为子年，行至玄枵时为亥年，依此类推。这种方法建立了天文观测与历法之间的深刻联系。</p></div><div class="content-card"><h3>超辰与摄提格</h3><p>由于岁星实际周期约为11.86年，略小于12年，长期观测会发现岁星的位置与理论推算的位置有所偏差，这种现象称为"超辰"。</p><p>为修正此误差，古人有时会调整纪年起点或采用更复杂的历法系统，例如考虑岁星与太岁（一个假想的天体，严格按12年周期运行）的关系。"摄提格"是与岁星运行相关的星官名，有时也被用来指代调整岁差的方法或周期。</p><p>这一现象的观测与修正体现了古代中国天文学家的精密观测能力和对天象规律的深刻理解。</p></div></div>
+            <!-- 时间轴 -->
+            <div class="timeline-container"><div class="timeline"></div><div class="timeline-event" style="left: 15%" data-year="-1046"><div class="dot"></div><div class="event-year">前1046年</div><div class="event-name">牧野之战</div></div><div class="timeline-event" style="left: 30%" data-year="-841"><div class="dot"></div><div class="event-year">前841年</div><div class="event-name">共和元年</div></div><div class="timeline-event" style="left: 45%" data-year="-221"><div class="dot"></div><div class="event-year">前221年</div><div class="event-name">秦统一六国</div></div><div class="timeline-event" style="left: 60%" data-year="8"><div class="dot"></div><div class="event-year">公元8年</div><div class="event-name">王莽篡汉</div></div><div class="timeline-event" style="left: 75%" data-year="618"><div class="dot"></div><div class="event-year">公元618年</div><div class="event-name">唐朝建立</div></div><div class="timeline-event" style="left: 90%" data-year="1368"><div class="dot"></div><div class="event-year">公元1368年</div><div class="event-name">明朝建立</div></div></div>
+        </section>
+
+        <!-- 天空的国度 -->
+        <section id="celestial-kingdoms" class="content-module exploration-module">
+            <div class="module-header"><h2>天空的国度：星次与分野</h2><p>"分野"是中国古代天文学的重要概念，它将天上的星区与地上的区域对应起来，形成独特的天人关系体系。每个星次都对应着地上的特定区域，这种对应关系体现了"天人感应"的思想。</p></div>
+            <div class="content-cards"><div class="content-card"><h3>分野的起源</h3><p>分野学说最早可追溯到西周时期，最初是将天上的星官与地上的诸侯国相对应。到了战国时期，随着天文学的发展，分野学说更加系统化，《吕氏春秋》和《淮南子》等书中都有详细记载。</p><p>分野的基本前提是"天人合一"，认为天象变化会影响地上相应区域的事物，包括政治、经济、军事等方面。通过观测某星次的异常天象，可以预测对应地区可能发生的事件。</p></div><div class="content-card"><h3>分野与政治</h3><p>分野学说在古代政治中有重要影响。统治者通过观测天象来预测吉凶，指导政治决策。例如，若星纪区出现异象，则视为吴越地区可能有重大事件发生。</p><p>春秋战国时期到汉朝，分野学说成为政治占卜的重要工具。朝廷设立专门的天文官（如太史令），负责观测星象变化，解释其含义，为统治者提供决策参考。</p></div></div>
+            <!-- 分野示意地图 -->
+            <div class="map-container"><div class="region-labels"><div class="region-label" style="top: 65%; left: 70%;" data-station="星纪">吴越 (星纪)</div><div class="region-label" style="top: 30%; left: 75%;" data-station="玄枵">齐 (玄枵)</div><div class="region-label" style="top: 25%; left: 60%;" data-station="娵訾">卫 (娵訾)</div><div class="region-label" style="top: 35%; left: 50%;" data-station="降娄">鲁 (降娄)</div><div class="region-label" style="top: 20%; left: 40%;" data-station="大梁">赵 (大梁)</div><div class="region-label" style="top: 40%; left: 30%;" data-station="实沈">魏 (实沈)</div><div class="region-label" style="top: 60%; left: 30%;" data-station="鹑首">楚 (鹑首)</div><div class="region-label" style="top: 55%; left: 48%;" data-station="鹑火">周 (鹑火)</div><div class="region-label" style="top: 70%; left: 55%;" data-station="鹑尾">韩 (鹑尾)</div><div class="region-label" style="top: 68%; left: 45%;" data-station="寿星">郑 (寿星)</div><div class="region-label" style="top: 55%; left: 65%;" data-station="大火">宋 (大火)</div><div class="region-label" style="top: 30%; left: 20%;" data-station="析木">燕 (析木)</div></div></div>
+        </section>
+
+        <!-- 星空坐标系对比 -->
+        <section id="celestial-systems" class="content-module exploration-module">
+             <div class="module-header"><h2>星空坐标系对比</h2><p>中国古代天文学发展出多种天区划分体系，其中最主要的有十二星次、二十八宿。这些体系与西方传入的黄道十二宫各有特点，反映了不同文明对天空的认识方式。</p></div>
+             <!-- 对比卡片容器 -->
+             <div class="systems-container">
+                 <!-- 十二星次卡片 -->
+                 <div class="system-card"><h3>十二星次</h3><div class="system-visual"><div class="circle" style="width: 80%; height: 80%; border: 2px solid var(--jupiter-color);"></div><div class="jupiter-icon" style="transform: rotate(45deg) translate(60px) rotate(-45deg);"></div><span style="position:absolute; top: 15%; left: 45%; color: var(--text-color);">星纪</span><span style="position:absolute; top: 45%; left: 80%; color: var(--text-color);">降娄</span><span style="position:absolute; bottom: 15%; left: 45%; color: var(--text-color);">鹑首</span><span style="position:absolute; top: 45%; left: 10%; color: var(--text-color);">寿星</span></div><div class="system-details"><p><strong>起源：</strong>中国古代，约西周至战国时期</p><p><strong>基准：</strong>主要依据<strong>赤道带</strong>，以<strong>岁星运行</strong>轨迹为参照</p><p><strong>功能：</strong>纪年、分野、天人感应</p><p><strong>特点：</strong>将周天分为12区，与地支结合，每年岁星徙居一次</p></div></div>
+                 <!-- 二十八宿卡片 -->
+                 <div class="system-card"><h3>二十八宿</h3><div class="system-visual"><div class="circle" style="width: 90%; height: 90%;"></div><span class="constellation-icon" style="transform: rotate(15deg) translate(70px) rotate(-15deg); color: #ff7b7b;">角</span><span class="constellation-icon" style="transform: rotate(40deg) translate(70px) rotate(-40deg); color: #ff7b7b;">亢</span><span class="constellation-icon" style="transform: rotate(100deg) translate(70px) rotate(-100deg); color: #67e6dc;">女</span><span class="constellation-icon" style="transform: rotate(125deg) translate(70px) rotate(-125deg); color: #67e6dc;">虚</span><span class="constellation-icon" style="transform: rotate(190deg) translate(70px) rotate(-190deg); color: #ffb367;">奎</span><span class="constellation-icon" style="transform: rotate(215deg) translate(70px) rotate(-215deg); color: #ffb367;">娄</span><span class="constellation-icon" style="transform: rotate(280deg) translate(70px) rotate(-280deg); color: #f388e8;">井</span><span class="constellation-icon" style="transform: rotate(305deg) translate(70px) rotate(-305deg); color: #f388e8;">鬼</span></div><div class="system-details"><p><strong>起源：</strong>中国古代，可能早于商代</p><p><strong>基准：</strong>沿<strong>赤道带</strong>分布的<strong>二十八个</strong>星官群</p><p><strong>功能：</strong>记日、月、五行星位置，定方位，占卜</p><p><strong>特点：</strong>将赤道周天分为不等宽的28区，是观测的基础坐标</p></div></div>
+                 <!-- 黄道十二宫卡片 -->
+                 <div class="system-card"><h3>黄道十二宫</h3><div class="system-visual"><div class="circle" style="width: 75%; height: 75%; border-style: dashed;"></div><span class="zodiac-icon" style="transform: rotate(0deg) translate(65px) rotate(0deg);">♈</span><span class="zodiac-icon" style="transform: rotate(30deg) translate(65px) rotate(-30deg);">♉</span><span class="zodiac-icon" style="transform: rotate(60deg) translate(65px) rotate(-60deg);">♊</span><span class="zodiac-icon" style="transform: rotate(90deg) translate(65px) rotate(-90deg);">♋</span><span class="zodiac-icon" style="transform: rotate(120deg) translate(65px) rotate(-120deg);">♌</span><span class="zodiac-icon" style="transform: rotate(150deg) translate(65px) rotate(-150deg);">♍</span><span class="zodiac-icon" style="transform: rotate(180deg) translate(65px) rotate(-180deg);">♎</span><span class="zodiac-icon" style="transform: rotate(210deg) translate(65px) rotate(-210deg);">♏</span><span class="zodiac-icon" style="transform: rotate(240deg) translate(65px) rotate(-240deg);">♐</span><span class="zodiac-icon" style="transform: rotate(270deg) translate(65px) rotate(-270deg);">♑</span><span class="zodiac-icon" style="transform: rotate(300deg) translate(65px) rotate(-300deg);">♒</span><span class="zodiac-icon" style="transform: rotate(330deg) translate(65px) rotate(-330deg);">♓</span></div><div class="system-details"><p><strong>起源：</strong>古巴比伦，经希腊传入中国（隋唐后）</p><p><strong>基准：</strong>太阳在<strong>黄道带</strong>上的视运动轨迹</p><p><strong>功能：</strong>占星术、标记太阳位置、季节划分</p><p><strong>特点：</strong>将黄道周天<strong>均分</strong>为12宫，每宫30度，与星座并不严格对应</p></div></div>
+            </div>
+        </section>
+
+        <!-- 历史的回响 -->
+        <section id="history-echoes" class="content-module exploration-module">
+            <div class="module-header"><h2>历史的回响：星次的演变与应用</h2><p>十二星次体系是中国古代天文学的重要组成部分，它的发展经历了漫长的历史过程，在不同时期有着不同的应用和演变，深刻影响了历法、政治乃至文化思想。</p></div>
+            <!-- 历史时间轴 -->
+            <div class="history-timeline">
+                 <div class="history-event"><h3>夏商周时期 (约前2070年-前771年)</h3><p>星次概念的萌芽。古人开始注意到岁星约十二年一周天运行规律，并观测标志性恒星（如大火星）以定季节。《尚书·尧典》中"历象日月星辰，敬授民时"的记载表明早期统治者已重视天文观测与时间划分。</p><span class="citation">—— 参考《尚书》、《逸周书》等文献记载</span></div>
+                 <div class="history-event"><h3>春秋战国时期 (前770年-前221年)</h3><p>星次体系逐渐成型。诸子百家争鸣，天文学取得长足发展。《左传》中记载了岁星位置与国运的联系。战国晚期，《吕氏春秋·有始览》明确记载了十二次的名称和大致分野，表明星次体系已基本完善，并用于纪年和占卜。</p><span class="citation">—— 参考《左传》、《吕氏春秋》、《淮南子》等文献</span></div>
+                 <div class="history-event"><h3>秦汉时期 (前221年-公元220年)</h3><p>星次体系规范化与官方应用。汉代《史记·天官书》和《汉书·律历志/天文志》详细记载了十二星次及其对应的星宿范围、度数和分野，将其作为帝国统一的天文-地理框架。岁星纪年法与干支纪年法并行，"超辰"问题也被注意到并尝试修正。</p><span class="citation">—— 参考《史记》、《汉书》等史料</span></div>
+                 <div class="history-event"><h3>魏晋南北朝至隋唐 (公元220年-公元907年)</h3><p>星次应用与理论深化。天文学家对岁星运行的观测更为精确，超辰的计算和修正方法（如摄提格用法）得到发展。星次与分野在占星术（星占）中的应用达到顶峰，如唐代《开元占经》汇集了大量相关内容。同时，佛教天文学也传入并与中国传统体系交流。</p><span class="citation">—— 参考《晋书·天文志》、《隋书·天文志》、《开元占经》等</span></div>
+                 <div class="history-event"><h3>宋元明清 (公元960年-公元1911年)</h3><p>星次体系的传承与变革。宋代郭守敬等天文学家在制定《授时历》时，虽以回归年为基础，但仍保留并精确化了星次、二十八宿等传统坐标系统。明清时期，西方天文学（特别是地心说和后来日心说的几何模型）传入，对传统宇宙观产生冲击，但十二星次在民间历法、择吉和术数中仍有广泛应用。</p><span class="citation">—— 参考《宋史·天文志》、《元史·历志》、《明史·历志》、《崇祯历书》等</span></div>
+                 <div class="history-event"><h3>近现代 (公元1912年至今)</h3><p>星次作为文化遗产的研究。随着现代天文学的确立，十二星次的实际天文观测功能被取代。但作为中国古代独特的宇宙观、时间观和天人关系思想的载体，十二星次及其相关文化（如分野、岁星纪年）成为天文学史、科技史和文化史研究的重要对象。</p><span class="citation">—— 参考现代天文学史、科技史及文化遗产研究文献</span></div>
+            </div>
+        </section>
+
+        <!-- 信息面板 (Modal) -->
+        <div id="info-panel" class="modal">
+            <button class="close-btn" onclick="closeModal('info-panel')">×</button>
+            <h3 id="info-title">星次名称</h3>
+            <div id="info-content"><p id="info-details-text"></p></div>
+            <!-- 分野信息区域 -->
+            <div id="fenye-map">
+                <h4>分野对应</h4>
+                <!-- 这个容器原本用于显示高亮区域，现在是空的 -->
+                <div id="fenye-region" style="position: absolute; top:0; left:0; width:100%; height: 100%; z-index: -1;">
+                </div>
+                <!-- 分野地区名称 -->
+                <p style="margin-bottom: 5px;">分野地区: <strong id="info-fenye"></strong></p>
+                <!-- 分野地区描述 -->
+                <p id="fenye-description" style="font-size: 0.9em; opacity: 0.8; margin: 5px auto 0; width: 90%; line-height: 1.6;"></p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- 常量与数据 ---
+        const JUPITER_ORBITAL_PERIOD = 11.862;         // 岁星实际公转周期（年）
+        const THEORETICAL_CYCLE_LENGTH = 12;         // 理论十二星次周期（年）
+        const REFERENCE_YEAR = 4;                    // 公元4年作为计算参考基准年
+        const REFERENCE_STATION_ID = 0;              // 参考年(公元4年)对应的理论星次ID (0代表星纪)
+        const MIN_YEAR = -1000;                      // 允许输入的最小年份
+        const MAX_YEAR = 2500;                       // 允许输入的最大年份
+
+        // --- DOM 元素选择 ---
+        const introduction = document.getElementById('introduction'); // 开篇介绍层
+        const startBtn = document.getElementById('start-btn'); // 开始按钮
+        const mainContent = document.getElementById('main-content'); // 主内容区域
+        const mainNavigation = document.getElementById('main-navigation'); // 主导航栏
+        const yearSlider = document.getElementById('year-slider'); // 年份滑块
+        const yearInput = document.getElementById('year-input'); // 年份输入框
+        const theoreticalStationNameDisplay = document.getElementById('theoretical-station-name'); // 理论岁次显示
+        const actualStationNameDisplay = document.getElementById('actual-station-name'); // 实际岁次显示
+        const chaoChenIndicator = document.getElementById('chao-chen-indicator'); // 超辰指示
+        const jupiterDynamic = document.getElementById('jupiter-dynamic'); // 动态岁星图标
+        const stations = document.querySelectorAll('.station'); // 所有星次标记元素
+        const infoPanel = document.getElementById('info-panel'); // 信息模态框
+        const infoTitle = document.getElementById('info-title'); // 模态框标题
+        const infoDetailsText = document.getElementById('info-details-text'); // 模态框星次详情
+        const infoFenye = document.getElementById('info-fenye'); // 模态框分野地区名称
+        const fenyeDescription = document.getElementById('fenye-description'); // 模态框分野描述
+        const fenyeRegionContainer = document.getElementById('fenye-region'); // 模态框内分野容器
+        const backgroundStars = document.getElementById('background-stars'); // 背景星星容器
+        const introStars = document.getElementById('intro-stars'); // 开篇动画星星容器
+        const navLinks = document.querySelectorAll('.nav-link'); // 所有导航链接
+        const contentModules = document.querySelectorAll('.content-module'); // 所有内容模块
+        const regionLabels = document.querySelectorAll('.region-label'); // 地图上的区域标签
+        const timelineEvents = document.querySelectorAll('.timeline-event'); // 时间故事模块的时间点
+        const coreModuleContainer = document.getElementById('core-module-container'); // 核心模块容器
+        const coreModuleElement = document.getElementById('core-module'); // 核心模块圆环
+
+        // --- 初始数据处理 ---
+        const stationData = Array.from(stations).map(el => ({
+            id: parseInt(el.dataset.id),
+            name: el.dataset.name,
+            element: el,
+            details: el.dataset.details,
+            fenye: el.dataset.fenye,
+            angle: parseFloat(getComputedStyle(el).getPropertyValue('--angle')) || 0
+        }));
+
+        const fenyeDescriptions = {
+            "吴越": "春秋战国时期的吴、越之地，大致对应今江浙沪地区。水乡泽国，鱼米之乡，文化独特。",
+            "齐": "春秋战国强国，位于今山东大部。临海，渔盐之利，工商业发达，稷下学宫闻名。",
+            "卫": "周初分封的诸侯国，位于今河南北部、河北南部。地处中原要冲，历史悠久。",
+            "鲁": "周公后裔封国，位于今山东西南部。孔子故里，儒家文化发源地，礼仪之邦。",
+            "赵": "战国七雄之一，三家分晋而立，位于今山西、河北、内蒙一带。胡服骑射，军事强盛。",
+            "魏": "战国七雄之一，三家分晋而立，位于今山西南部、河南北部。战国初期霸主，变法图强。",
+            "楚": "南方大国，疆域广阔，位于今湖北、湖南及周边。文化浪漫神秘，自成一派（楚辞）。",
+            "周": "周天子畿内地，核心在洛阳、西安附近。宗法礼乐制度源头，华夏文明核心区。",
+            "韩": "战国七雄之一，三家分晋而立，位于今河南中西部、山西东南部。以术治国，冶炼发达。",
+            "郑": "春秋小霸，位于今河南中部。地处中心，商业交通发达，郑声靡靡。",
+            "宋": "商朝后裔封国，位于今河南东部、山东西南。文化上承袭殷商，思想较为保守。",
+            "燕": "战国七雄之一，位于今河北北部、北京、辽宁一带。地处北方边陲，历史悠久。"
+        };
+
+        // --- 核心计算函数 ---
+        function getTheoreticalStationId(year) {
+            const yearsDiff = year - REFERENCE_YEAR;
+            let stationId = (REFERENCE_STATION_ID + (yearsDiff % THEORETICAL_CYCLE_LENGTH) + THEORETICAL_CYCLE_LENGTH) % THEORETICAL_CYCLE_LENGTH;
+            return stationId;
+        }
+
+        function getActualJupiterPositionAngle(year) {
+            const yearsDiff = year - REFERENCE_YEAR;
+            const totalDegrees = (yearsDiff / JUPITER_ORBITAL_PERIOD) * 360;
+            const referenceAngle = stationData.find(s => s.id === REFERENCE_STATION_ID)?.angle ?? 0;
+            let currentAngle = (referenceAngle + totalDegrees) % 360;
+            if (currentAngle < 0) { currentAngle += 360; }
+            return currentAngle;
+        }
+
+        function getStationIdFromAngle(angle) {
+            const stationSize = 360 / THEORETICAL_CYCLE_LENGTH;
+            const adjustedAngle = (angle - (-15) + 360) % 360; // 补偿 CSS 旋转
+            const stationId = Math.floor(adjustedAngle / stationSize);
+            return stationId % 12;
+        }
+
+        // --- UI 更新函数 ---
+        function updateDisplay(year) {
+            const validatedYear = Math.max(MIN_YEAR, Math.min(MAX_YEAR, parseInt(year)));
+            const theoreticalStationId = getTheoreticalStationId(validatedYear);
+            const actualJupiterAngle = getActualJupiterPositionAngle(validatedYear);
+            const actualStationId = getStationIdFromAngle(actualJupiterAngle);
+            const theoreticalStation = stationData.find(s => s.id === theoreticalStationId);
+            const actualStation = stationData.find(s => s.id === actualStationId);
+
+            if (!theoreticalStation || !actualStation) return;
+
+            if(theoreticalStationNameDisplay) theoreticalStationNameDisplay.textContent = theoreticalStation.name;
+            if(actualStationNameDisplay) actualStationNameDisplay.textContent = actualStation.name;
+
+            stations.forEach(el => el.classList.remove('active-suici'));
+            if (theoreticalStation.element) {
+                theoreticalStation.element.classList.add('active-suici');
+            }
+
+            if (coreModuleElement && coreModuleElement.offsetWidth > 0) {
+                const ringRadius = coreModuleElement.offsetWidth / 2;
+                const jupiterOrbitRadius = ringRadius * 0.85;
+                const angleRad = (actualJupiterAngle - (-15) - 90) * (Math.PI / 180);
+                const x = jupiterOrbitRadius * Math.cos(angleRad);
+                const y = jupiterOrbitRadius * Math.sin(angleRad);
+
+                const currentTransform = getComputedStyle(jupiterDynamic).transform;
+                let currentScale = 1;
+                if (currentTransform && currentTransform !== 'none') {
+                    const matrix = currentTransform.match(/matrix.*\((.+)\)/);
+                    if (matrix && matrix[1]) {
+                        const matrixValues = matrix[1].split(', ');
+                        currentScale = parseFloat(matrixValues[0]);
+                        if (isNaN(currentScale) || currentScale === 0) currentScale = 1;
+                    }
+                }
+                jupiterDynamic.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${currentScale})`;
+            }
+
+            const diff = (actualStationId - theoreticalStationId + 12) % 12;
+            let chaoChenText = "";
+            if (diff === 0) chaoChenText = "岁星合次 (理论与实位大致重合)";
+            else if (diff === 11) chaoChenText = `滞后 (岁星接近进入下一理论星次)`;
+            else chaoChenText = `超辰约 ${diff} 次 (岁星超前理论 ${diff} 区)`;
+            if(chaoChenIndicator) chaoChenIndicator.textContent = chaoChenText;
+
+            if (yearSlider && parseInt(yearSlider.value) !== validatedYear) {
+                yearSlider.value = validatedYear.toString();
+            }
+            if (yearInput && parseInt(yearInput.value) !== validatedYear) {
+                yearInput.value = validatedYear.toString();
+            }
+        }
+
+        function showStationInfo(station) {
+            if (!station || !infoPanel) return;
+
+            if(infoTitle) infoTitle.textContent = station.name;
+            if(infoDetailsText) infoDetailsText.textContent = station.details.replace(/ \| /g, '\n');
+            if(infoFenye) infoFenye.textContent = station.fenye || '未知';
+            if(fenyeDescription) fenyeDescription.textContent = fenyeDescriptions[station.fenye] || '暂无详细描述。';
+
+            // 清空分野区域容器 (不再添加黄色框)
+            if(fenyeRegionContainer) fenyeRegionContainer.innerHTML = '';
+
+            infoPanel.classList.add('visible');
+        }
+
+        function closeModal(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.remove('visible');
+            }
+        }
+
+        function scrollToModule(targetModuleId) {
+            const targetElement = document.getElementById(targetModuleId);
+            if (targetElement && mainNavigation) {
+                 const navHeight = mainNavigation.offsetHeight;
+                 const elementPosition = targetElement.getBoundingClientRect().top;
+                 const offsetPosition = elementPosition + window.pageYOffset - navHeight - 10;
+                 window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+            } else if (targetElement) {
+                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                console.warn("警告：找不到目标模块:", targetModuleId);
+            }
+        }
+
+        // --- 辅助函数 ---
+        function createStars(container, count = 100) {
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div'); star.classList.add('star');
+                const size = Math.random() * 2 + 0.5; const duration = Math.random() * 3 + 2;
+                const opacityMin = Math.random() * 0.3 + 0.1; const opacityMax = Math.random() * 0.4 + 0.6;
+                const scaleMin = Math.random() * 0.3 + 0.7; const scaleMax = Math.random() * 0.3 + 1.0;
+                star.style.width = `${size}px`; star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`; star.style.left = `${Math.random() * 100}%`;
+                star.style.setProperty('--twinkle-duration', `${duration}s`);
+                star.style.setProperty('--twinkle-opacity-min', opacityMin.toString());
+                star.style.setProperty('--twinkle-opacity-max', opacityMax.toString());
+                star.style.setProperty('--twinkle-scale-min', scaleMin.toString());
+                star.style.setProperty('--twinkle-scale-max', scaleMax.toString());
+                container.appendChild(star);
+            }
+        }
+
+        function createStationSymbols() {
+            if (!introStars) return;
+            introStars.innerHTML = '';
+            const symbolChars = ["子", "亥", "戌", "酉", "申", "未", "午", "巳", "辰", "卯", "寅", "丑"];
+            const count = 24;
+            for (let i = 0; i < count; i++) {
+                const symbol = document.createElement('div'); symbol.classList.add('station-symbol');
+                symbol.textContent = symbolChars[Math.floor(Math.random() * symbolChars.length)];
+                symbol.style.top = `${Math.random() * 90 + 5}%`; symbol.style.left = `${Math.random() * 90 + 5}%`;
+                symbol.style.opacity = '0'; symbol.style.transform = `rotate(${Math.random() * 360}deg) scale(0.5)`;
+                symbol.style.transition = `opacity ${Math.random() * 2 + 1}s ease-in-out, transform ${Math.random() * 2 + 1}s ease-in-out`;
+                introStars.appendChild(symbol);
+                setTimeout(() => {
+                    symbol.style.opacity = `${Math.random() * 0.3 + 0.1}`;
+                    symbol.style.transform = `rotate(${Math.random() * 360}deg) scale(${Math.random() * 0.5 + 0.8})`;
+                    setTimeout(() => {
+                        symbol.style.opacity = '0';
+                        symbol.style.transform = `rotate(${Math.random() * 180 - 90}deg) scale(0.3)`;
+                        symbol.addEventListener('transitionend', () => symbol.remove(), { once: true });
+                    }, Math.random() * 3000 + 4000);
+                }, Math.random() * 1500);
+            }
+        }
+
+        // --- 事件处理函数 ---
+        function handleYearInputChange() {
+            if(!yearInput) return;
+            const yearStr = yearInput.value;
+            const year = parseInt(yearStr);
+            if (!isNaN(year)) {
+                const validatedYear = Math.max(MIN_YEAR, Math.min(MAX_YEAR, year));
+                if (validatedYear !== year) { yearInput.value = validatedYear.toString(); }
+                updateDisplay(validatedYear);
+            } else if (yearStr !== '' && yearStr !== '-') {
+                const sliderYear = parseInt(yearSlider?.value || REFERENCE_YEAR);
+                const validYear = Math.max(MIN_YEAR, Math.min(MAX_YEAR, sliderYear));
+                yearInput.value = validYear.toString(); updateDisplay(validYear);
+            } else if (yearStr === '-') { /* 允许输入负号 */
+            } else {
+                 const sliderYear = parseInt(yearSlider?.value || REFERENCE_YEAR);
+                 const validYear = !isNaN(sliderYear) ? Math.max(MIN_YEAR, Math.min(MAX_YEAR, sliderYear)) : REFERENCE_YEAR;
+                 yearInput.value = validYear.toString(); updateDisplay(validYear);
+            }
+        }
+
+        // --- 事件监听器设置 ---
+        function setupEventListeners() {
+            if(startBtn && introduction) {
+                startBtn.addEventListener('click', () => {
+                    introduction.classList.add('hidden');
+                    requestAnimationFrame(() => { requestAnimationFrame(() => {
+                             updateDisplay(parseInt(yearInput?.value || yearSlider?.value || REFERENCE_YEAR)); }); });
+                });
+            }
+            if(yearSlider) {
+                yearSlider.addEventListener('input', (e) => {
+                    const year = parseInt(e.target.value); if (!isNaN(year)) { updateDisplay(year); } });
+            }
+            if(yearInput) {
+                yearInput.addEventListener('blur', handleYearInputChange);
+                yearInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { handleYearInputChange(); yearInput.blur(); } });
+            }
+            stations.forEach(stationElement => {
+                stationElement.addEventListener('click', () => {
+                    const stationId = parseInt(stationElement.dataset.id);
+                    const station = stationData.find(s => s.id === stationId); if (station) showStationInfo(station); }); });
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => { e.preventDefault(); const targetId = link.dataset.target; scrollToModule(targetId); }); });
+            regionLabels.forEach(label => {
+                label.addEventListener('click', () => {
+                    const stationName = label.dataset.station; const station = stationData.find(s => s.name === stationName); if (station) showStationInfo(station);
+                    regionLabels.forEach(l => { l.classList.remove('active'); l.dataset.selected = 'false'; });
+                    label.classList.add('active'); label.dataset.selected = 'true'; });
+                label.addEventListener('mouseenter', () => { if (label.dataset.selected !== 'true') label.classList.add('active'); });
+                label.addEventListener('mouseleave', () => { if (label.dataset.selected !== 'true') label.classList.remove('active'); }); });
+            timelineEvents.forEach(event => {
+                event.addEventListener('click', function() {
+                    const year = parseInt(this.dataset.year);
+                    if (!isNaN(year)) { const validatedYear = Math.max(MIN_YEAR, Math.min(MAX_YEAR, year)); updateDisplay(validatedYear); scrollToModule('core-module-section'); } }); });
+             if(jupiterDynamic && infoPanel) {
+                jupiterDynamic.addEventListener('click', () => {
+                    const jupiterInfo = { name: "岁星 (木星)", details: "太阳系第五颗行星 | 古代称为岁星、太岁 | 公转周期: 约11.86年 | 赤道直径: 约14.3万公里\n象征: 时间、权威、分野体系的核心参照物", fenye: "统御全天", };
+                    if (infoTitle) infoTitle.textContent = jupiterInfo.name;
+                    if (infoDetailsText) infoDetailsText.textContent = jupiterInfo.details;
+                    if (infoFenye) infoFenye.textContent = jupiterInfo.fenye;
+                    if (fenyeDescription) fenyeDescription.textContent = "岁星运行是古人划分时间和空间（分野）的重要依据。其近十二年的周期与十二地支相合，形成了独特的岁星纪年法。";
+                    if (fenyeRegionContainer) fenyeRegionContainer.innerHTML = '<div class="map-region active" style="top: 50%; left: 50%; width: auto; height: auto; transform: translate(-50%, -50%); background-color: transparent; border-radius: 0; border: none; display: flex; align-items: center; justify-content: center; text-align: center; z-index: 0; padding: 10px;"><span style="color: var(--jupiter-color); text-shadow: 0 0 5px var(--jupiter-glow); font-size: 1em;">岁星光耀九州</span></div>';
+                    infoPanel.classList.add('visible'); }); }
+            let resizeTimeout; let lastNavHeight = mainNavigation ? mainNavigation.offsetHeight : 60;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                     const currentYear = parseInt(yearInput?.value || yearSlider?.value || REFERENCE_YEAR); updateDisplay(currentYear);
+                    const currentNavHeight = mainNavigation ? mainNavigation.offsetHeight : 60;
+                    if (mainNavigation && Math.abs(currentNavHeight - lastNavHeight) > 1) { lastNavHeight = currentNavHeight; setupIntersectionObserver(); } }, 250); });
+             if (infoPanel) {
+                 window.addEventListener('click', (event) => { if (event.target === infoPanel) { closeModal('info-panel'); } }); }
+        }
+
+        // --- Intersection Observer 用于导航栏高亮 ---
+        let intersectionObserverInstance = null;
+        function setupIntersectionObserver() {
+             if (intersectionObserverInstance) { intersectionObserverInstance.disconnect(); }
+            if (!mainNavigation) { console.error("错误: 找不到主导航栏 '#main-navigation'，无法设置滚动监听。"); return; }
+            requestAnimationFrame(() => {
+                let navHeight = mainNavigation.offsetHeight; if (typeof navHeight !== 'number' || navHeight <= 0) { navHeight = 60; }
+                const observerOptions = { root: null, rootMargin: `-${navHeight + 10}px 0px -40% 0px`, threshold: 0.1 };
+                let lastActivatedLink = null;
+                const observerCallback = (entries) => {
+                     let bestVisibleEntry = null;
+                    entries.forEach(entry => { if (entry.isIntersecting) { if (!bestVisibleEntry || entry.boundingClientRect.top < bestVisibleEntry.boundingClientRect.top) { bestVisibleEntry = entry; } } });
+                    if (bestVisibleEntry) {
+                        const targetId = bestVisibleEntry.target.id; const correspondingNavLink = document.querySelector(`.nav-link[data-target="${targetId}"]`);
+                        if (correspondingNavLink && correspondingNavLink !== lastActivatedLink) { navLinks.forEach(link => link.classList.remove('active')); correspondingNavLink.classList.add('active'); lastActivatedLink = correspondingNavLink; } } };
+                try {
+                    intersectionObserverInstance = new IntersectionObserver(observerCallback, observerOptions);
+                    contentModules.forEach(module => { if (module && module.id) { intersectionObserverInstance.observe(module); } else if (module && !module.id) { console.warn("发现一个没有ID的内容模块，无法用于滚动监听:", module); } });
+                } catch (e) { console.error("创建 IntersectionObserver 时出错:", e); intersectionObserverInstance = null; } });
+        }
+
+        // --- 页面初始化函数 ---
+        function initializePage() {
+            createStars(backgroundStars, 150); createStars(introStars, 80); createStationSymbols();
+            window.closeModal = closeModal;
+            if (yearInput) { yearInput.min = MIN_YEAR.toString(); yearInput.max = MAX_YEAR.toString(); }
+            if (yearSlider) { yearSlider.min = MIN_YEAR.toString(); yearSlider.max = MAX_YEAR.toString(); }
+            let initialYear = REFERENCE_YEAR;
+            if (yearInput && yearInput.value !== '') {
+                 initialYear = parseInt(yearInput.value);
+                 if (isNaN(initialYear) || initialYear < MIN_YEAR || initialYear > MAX_YEAR) { initialYear = REFERENCE_YEAR; yearInput.value = initialYear.toString(); } }
+            if (yearSlider && yearSlider.value !== initialYear.toString()) { yearSlider.value = initialYear.toString(); }
+             if (yearInput && yearInput.value === '' && yearSlider) { yearInput.value = yearSlider.value; initialYear = parseInt(yearSlider.value);
+             } else if (yearInput && yearInput.value !== initialYear.toString()){ yearInput.value = initialYear.toString(); }
+            updateDisplay(initialYear);
+            setupEventListeners();
+            setTimeout(setupIntersectionObserver, 100);
+            if (!introduction || getComputedStyle(introduction).display === 'none') {
+                if (mainContent) mainContent.style.opacity = '1';
+                 requestAnimationFrame(() => { requestAnimationFrame(() => { updateDisplay(initialYear); }); }); }
+        }
+
+        // --- 页面加载完成后执行初始化 ---
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>
